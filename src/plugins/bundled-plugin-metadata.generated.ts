@@ -166,7 +166,20 @@ export const GENERATED_BUNDLED_PLUGIN_METADATA = [
       configSchema: {
         type: "object",
         additionalProperties: false,
-        properties: {},
+        properties: {
+          webSearch: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              apiKey: {
+                type: ["string", "object"],
+              },
+              model: {
+                type: "string",
+              },
+            },
+          },
+        },
       },
       providers: ["anthropic"],
       providerAuthEnvVars: {
@@ -197,6 +210,17 @@ export const GENERATED_BUNDLED_PLUGIN_METADATA = [
           cliDescription: "Anthropic API key",
         },
       ],
+      uiHints: {
+        "webSearch.apiKey": {
+          label: "Claude Web Search API Key",
+          help: "Anthropic API key for Claude web search (fallback: ANTHROPIC_API_KEY env var).",
+          sensitive: true,
+        },
+        "webSearch.model": {
+          label: "Claude Web Search Model",
+          help: "Claude model override for web search (default: claude-sonnet-4-6).",
+        },
+      },
     },
   },
   {

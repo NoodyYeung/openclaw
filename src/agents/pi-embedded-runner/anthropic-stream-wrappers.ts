@@ -394,3 +394,51 @@ export function isAnthropicBedrockModel(modelId: string): boolean {
   const normalized = modelId.toLowerCase();
   return normalized.includes("anthropic.claude") || normalized.includes("anthropic/claude");
 }
+
+/**
+ * Returns true when the user has configured "anthropic-web" as the web search
+ * provider AND the model is routed through the Anthropic Messages API.
+ * In that case we inject the server-side `web_search_20250305` tool into the
+ * request payload so Claude handles web search natively — no separate API call,
+ * works with OAuth / setup-token / API key auth.
+ */
+export function shouldInjectAnthropicNativeWebSearch(params: {
+  config?: OpenClawConfig;
+  provider: string;
+}): boolean {
+  if (params.provider !== "anthropic") {
+    return false;
+  }
+  const searchProvider = (params.config?.tools?.web?.search as Record<string, unknown> | undefined)
+    ?.provider;
+  return (
+    typeof searchProvider === "string" && searchProvider.trim().toLowerCase() === "anthropic-web"
+  );
+}
+
+export function createAnthropicNativeWebSearchWrapper(
+  baseStreamFn: StreamFn | undefined,
+): StreamFn {
+  const underlying = baseStreamFn ?? streamSimple;
+  return (model, context, options) => {
+    if (model.api !== "anthropic-messages") {
+      return underlying(model, context, options);
+    }
+
+    return streamWithPayloadPatch(underlying, model, context, options, (payloadObj) => {
+      if (!Array.isArray(payloadObj.tools)) {
+        payloadObj.tools = [];
+      }
+      // Avoid duplicate injection
+      const alreadyHas = (payloadObj.tools as Array<Record<string, unknown>>).some(
+        (t) => typeof t.type === "string" && t.type.startsWith("web_search_"),
+      );
+      if (!alreadyHas) {
+        (payloadObj.tools as Array<Record<string, unknown>>).push({
+          type: "web_search_20260209",
+          name: "web_search",
+        });
+      }
+    });
+  };
+}

@@ -28,6 +28,7 @@ import {
 import { normalizeModelCompat } from "openclaw/plugin-sdk/provider-models";
 import { fetchClaudeUsage } from "openclaw/plugin-sdk/provider-usage";
 import { anthropicMediaUnderstandingProvider } from "./media-understanding-provider.js";
+import { createAnthropicWebSearchProvider } from "./web-search.js";
 
 const PROVIDER_ID = "anthropic";
 const DEFAULT_ANTHROPIC_MODEL = "anthropic/claude-sonnet-4-6";
@@ -396,5 +397,6 @@ export default definePluginEntry({
         }),
     });
     api.registerMediaUnderstandingProvider(anthropicMediaUnderstandingProvider);
+    api.registerWebSearchProvider(createAnthropicWebSearchProvider());
   },
 });

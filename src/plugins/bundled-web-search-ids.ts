@@ -1,4 +1,5 @@
 export const BUNDLED_WEB_SEARCH_PLUGIN_IDS = [
+  "anthropic",
   "brave",
   "duckduckgo",
   "exa",

@@ -1,4 +1,5 @@
 const BUNDLED_WEB_SEARCH_PROVIDER_PLUGIN_IDS = {
+  "anthropic-web": "anthropic",
   brave: "brave",
   exa: "exa",
   firecrawl: "firecrawl",

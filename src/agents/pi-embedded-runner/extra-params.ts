@@ -10,6 +10,7 @@ import {
 } from "../../plugins/provider-runtime.js";
 import {
   createAnthropicBetaHeadersWrapper,
+  createAnthropicNativeWebSearchWrapper,
   createBedrockNoCacheWrapper,
   createAnthropicFastModeWrapper,
   createAnthropicToolPayloadCompatibilityWrapper,
@@ -17,6 +18,7 @@ import {
   resolveAnthropicFastMode,
   resolveAnthropicBetas,
   resolveCacheRetention,
+  shouldInjectAnthropicNativeWebSearch,
 } from "./anthropic-stream-wrappers.js";
 import { createGoogleThinkingPayloadWrapper } from "./google-stream-wrappers.js";
 import { log } from "./logger.js";
@@ -359,6 +361,12 @@ export function applyExtraParamsToAgent(
     config: cfg,
     workspaceDir,
   });
+
+  if (shouldInjectAnthropicNativeWebSearch({ config: cfg, provider })) {
+    log.debug(`injecting native Anthropic web_search_20250305 tool for ${provider}/${modelId}`);
+    agent.streamFn = createAnthropicNativeWebSearchWrapper(agent.streamFn);
+  }
+
   const providerStreamBase = agent.streamFn;
   const pluginWrappedStreamFn = providerRuntimeDeps.wrapProviderStreamFn({
     provider,
