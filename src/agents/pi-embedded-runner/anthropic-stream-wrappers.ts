@@ -435,7 +435,7 @@ export function createAnthropicNativeWebSearchWrapper(
       );
       if (!alreadyHas) {
         (payloadObj.tools as Array<Record<string, unknown>>).push({
-          type: "web_search_20260209",
+          type: "web_search_20250305",
           name: "web_search",
         });
       }

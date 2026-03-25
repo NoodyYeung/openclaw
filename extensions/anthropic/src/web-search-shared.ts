@@ -135,7 +135,7 @@ export async function requestAnthropicWebSearch(params: {
         body: JSON.stringify({
           model: params.model,
           max_tokens: 4096,
-          tools: [{ type: "web_search_20260209", name: "web_search" }],
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
           messages: [{ role: "user", content: params.query }],
         }),
       },
